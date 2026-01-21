@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
+    "name": "edstevo/laravel-integration-credentials",
     "description": ":package_description",
     "keywords": [
-        ":vendor_name",
+        "edstevo",
         "laravel",
-        ":package_slug"
+        "laravel-integration-credentials"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/edstevo/laravel-integration-credentials",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Edward Stephenson",
+            "email": "edward.stephenson@me.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "EdStevo\\LaravelIntegrationCredentials\\": "src/",
+            "EdStevo\\LaravelIntegrationCredentials\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "EdStevo\\LaravelIntegrationCredentials\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,11 +63,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
-            ],
-            "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
-            }
+                "EdStevo\\LaravelIntegrationCredentials\\LaravelIntegrationCredentialsServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
