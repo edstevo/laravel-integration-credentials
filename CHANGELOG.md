@@ -2,6 +2,10 @@
 
 All notable changes to `LaravelIntegrationCredentials` will be documented in this file.
 
+## v1.0.2 - 2026-01-21
+
+**Full Changelog**: https://github.com/edstevo/laravel-integration-credentials/compare/v1.0.1...v1.0.2
+
 ## v1.0.1 - 2026-01-21
 
 ### What's Changed

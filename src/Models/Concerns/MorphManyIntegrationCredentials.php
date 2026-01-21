@@ -11,12 +11,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 trait MorphManyIntegrationCredentials
 {
-
     public function integrationCredentials(): MorphMany
     {
         return $this->morphMany(IntegrationCredential::class, 'integrable');
     }
-
 
     /**
      * Fetch a credential record.
@@ -29,15 +27,15 @@ trait MorphManyIntegrationCredentials
             ->first();
     }
 
-    public function getIntegrationCredentialValue(string $provider, string $key, bool $allowExpired = false): string|null
+    public function getIntegrationCredentialValue(string $provider, string $key, bool $allowExpired = false): ?string
     {
         $credential = $this->getIntegrationCredential($provider, $key);
 
-        if (!$credential) {
+        if (! $credential) {
             return null;
         }
 
-        if (!$allowExpired && $credential->isExpired()) {
+        if (! $allowExpired && $credential->isExpired()) {
             return null;
         }
 
@@ -48,12 +46,11 @@ trait MorphManyIntegrationCredentials
      * Create or update a credential.
      */
     public function setIntegrationCredential(
-        string  $provider,
-        string  $key,
-        string  $value,
+        string $provider,
+        string $key,
+        string $value,
         ?Carbon $expiresAt = null
-    ): IntegrationCredential
-    {
+    ): IntegrationCredential {
         return $this->integrationCredentials()->updateOrCreate(
             [
                 'provider' => $provider,
@@ -61,7 +58,7 @@ trait MorphManyIntegrationCredentials
             ],
             [
                 'value' => $value,
-                'expires_at' => $expiresAt
+                'expires_at' => $expiresAt,
             ]
         );
     }
@@ -71,7 +68,7 @@ trait MorphManyIntegrationCredentials
      */
     public function forgetIntegrationCredential(string $provider, string $key): bool
     {
-        return (bool)$this->integrationCredentials()
+        return (bool) $this->integrationCredentials()
             ->where('provider', $provider)
             ->where('key', $key)
             ->delete();
@@ -82,7 +79,7 @@ trait MorphManyIntegrationCredentials
      */
     public function forgetIntegrationProvider(string $provider): bool
     {
-        return (bool)$this->integrationCredentials()
+        return (bool) $this->integrationCredentials()
             ->where('provider', $provider)
             ->delete();
     }

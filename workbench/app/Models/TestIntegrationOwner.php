@@ -10,5 +10,6 @@ class TestIntegrationOwner extends Model
     use MorphManyIntegrationCredentials;
 
     protected $table = 'test_integration_owners';
+
     protected $guarded = [];
 }
