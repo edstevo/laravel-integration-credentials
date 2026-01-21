@@ -1,6 +1,5 @@
 <?php
 
-
 use Workbench\App\Models\TestIntegrationOwner;
 
 it('can attach integration credentials via morphMany', function () {
