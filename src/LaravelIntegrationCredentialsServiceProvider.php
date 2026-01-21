@@ -16,6 +16,7 @@ class LaravelIntegrationCredentialsServiceProvider extends PackageServiceProvide
          */
         $package
             ->name('laravel-integration-credentials')
-            ->discoversMigrations();
+            ->discoversMigrations()
+            ->runsMigrations();
     }
 }
