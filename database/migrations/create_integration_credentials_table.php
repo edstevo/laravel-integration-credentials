@@ -25,7 +25,7 @@ return new class extends Migration
                 'integrable_id',
                 'provider',
                 'key',
-            ]);
+            ],'integration_credentials_unique');
         });
     }
 };
