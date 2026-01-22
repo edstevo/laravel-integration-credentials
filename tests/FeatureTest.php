@@ -117,7 +117,7 @@ it('can scope query via eloquent - expecting test model', function () {
     $owner = TestIntegrationOwner::create(['name' => 'Test App']);
     $owner->setIntegrationCredential('shopify', 'id', $testId);
 
-    $res = TestIntegrationOwner::whereHasIntegrationCredential('shopify', 'id', $testId)->first();
+    $res = TestIntegrationOwner::whereHasIntegrationCredentialValue('shopify', 'id', $testId)->first();
 
     expect($res)->toBeInstanceOf(TestIntegrationOwner::class)
         ->and($res->id)->toBe($owner->id);
@@ -127,7 +127,7 @@ it('can scope query via eloquent - expecting null', function () {
     $testId = \Illuminate\Support\Str::random();
     $owner = TestIntegrationOwner::create(['name' => 'Test App']);
 
-    $res = TestIntegrationOwner::whereHasIntegrationCredential('shopify', 'id', $testId)->first();
+    $res = TestIntegrationOwner::whereHasIntegrationCredentialValue('shopify', 'id', $testId)->first();
 
     expect($res)->toBeNull();
 });

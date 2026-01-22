@@ -89,11 +89,12 @@ trait MorphManyIntegrationCredentials
     /**
      * Scope: only models that have a given integration credential.
      */
-    public function scopeWhereHasIntegrationCredential(Builder $query, string $provider, string $key, bool $mustBeValid = true): Builder
+    public function scopeWhereHasIntegrationCredentialValue(Builder $query, string $provider, string $key, string $value, bool $mustBeValid = true): Builder
     {
-        return $query->whereHas('integrationCredentials', function (Builder $q) use ($provider, $key, $mustBeValid) {
+        return $query->whereHas('integrationCredentials', function (Builder $q) use ($provider, $key, $value, $mustBeValid) {
             $q->where('provider', $provider)
-                ->where('key', $key);
+                ->where('key', $key)
+                ->where('value', $value);
 
             if ($mustBeValid) {
                 $q->where(function ($q) {

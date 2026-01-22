@@ -18,7 +18,6 @@ class IntegrationCredential extends Model
      * Attribute casting.
      */
     protected $casts = [
-        'value' => 'encrypted',
         'expires_at' => 'datetime',
     ];
 
