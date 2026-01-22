@@ -4,6 +4,7 @@ namespace EdStevo\LaravelIntegrationCredentials\Models\Concerns;
 
 use Carbon\Carbon;
 use EdStevo\LaravelIntegrationCredentials\Models\IntegrationCredential;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
@@ -31,11 +32,11 @@ trait MorphManyIntegrationCredentials
     {
         $credential = $this->getIntegrationCredential($provider, $key);
 
-        if (! $credential) {
+        if (!$credential) {
             return null;
         }
 
-        if (! $allowExpired && $credential->isExpired()) {
+        if (!$allowExpired && $credential->isExpired()) {
             return null;
         }
 
@@ -46,11 +47,12 @@ trait MorphManyIntegrationCredentials
      * Create or update a credential.
      */
     public function setIntegrationCredential(
-        string $provider,
-        string $key,
-        string $value,
+        string  $provider,
+        string  $key,
+        string  $value,
         ?Carbon $expiresAt = null
-    ): IntegrationCredential {
+    ): IntegrationCredential
+    {
         return $this->integrationCredentials()->updateOrCreate(
             [
                 'provider' => $provider,
@@ -68,7 +70,7 @@ trait MorphManyIntegrationCredentials
      */
     public function forgetIntegrationCredential(string $provider, string $key): bool
     {
-        return (bool) $this->integrationCredentials()
+        return (bool)$this->integrationCredentials()
             ->where('provider', $provider)
             ->where('key', $key)
             ->delete();
@@ -79,8 +81,26 @@ trait MorphManyIntegrationCredentials
      */
     public function forgetIntegrationProvider(string $provider): bool
     {
-        return (bool) $this->integrationCredentials()
+        return (bool)$this->integrationCredentials()
             ->where('provider', $provider)
             ->delete();
+    }
+
+    /**
+     * Scope: only models that have a given integration credential.
+     */
+    public function scopeWhereHasIntegrationCredential(Builder $query, string $provider, string $key, bool $mustBeValid = true): Builder
+    {
+        return $query->whereHas('integrationCredentials', function (Builder $q) use ($provider, $key, $mustBeValid) {
+            $q->where('provider', $provider)
+                ->where('key', $key);
+
+            if ($mustBeValid) {
+                $q->where(function ($q) {
+                    $q->whereNull('expires_at')
+                        ->orWhere('expires_at', '>', now());
+                });
+            }
+        });
     }
 }

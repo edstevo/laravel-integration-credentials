@@ -110,3 +110,24 @@ it('can forget all credentials for a provider', function () {
         ->and($owner->getIntegrationCredential('shopify', 'shop_id'))->toBeNull()
         ->and($owner->getIntegrationCredential('stripe', 'secret_key'))->not->toBeNull();
 });
+
+it('can scope query via eloquent - expecting test model', function () {
+    $testId = \Illuminate\Support\Str::random();
+
+    $owner = TestIntegrationOwner::create(['name' => 'Test App']);
+    $owner->setIntegrationCredential('shopify', 'id', $testId);
+
+    $res = TestIntegrationOwner::whereHasIntegrationCredential('shopify', 'id', $testId)->first();
+
+    expect($res)->toBeInstanceOf(TestIntegrationOwner::class)
+        ->and($res->id)->toBe($owner->id);
+});
+
+it('can scope query via eloquent - expecting null', function () {
+    $testId = \Illuminate\Support\Str::random();
+    $owner = TestIntegrationOwner::create(['name' => 'Test App']);
+
+    $res = TestIntegrationOwner::whereHasIntegrationCredential('shopify', 'id', $testId)->first();
+
+    expect($res)->toBeNull();
+});
