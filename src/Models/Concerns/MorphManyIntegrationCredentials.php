@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 trait MorphManyIntegrationCredentials
 {
+    /**
+     * @return MorphMany<IntegrationCredential, $this>
+     */
     public function integrationCredentials(): MorphMany
     {
         return $this->morphMany(IntegrationCredential::class, 'integrable');
@@ -22,10 +25,13 @@ trait MorphManyIntegrationCredentials
      */
     public function getIntegrationCredential(string $provider, string $key): ?IntegrationCredential
     {
-        return $this->integrationCredentials()
+        /** @var IntegrationCredential|null $credential */
+        $credential = $this->integrationCredentials()
             ->where('provider', $provider)
             ->where('key', $key)
             ->first();
+
+        return $credential;
     }
 
     public function getIntegrationCredentialValue(string $provider, string $key, bool $allowExpired = false): ?string
@@ -52,7 +58,8 @@ trait MorphManyIntegrationCredentials
         string $value,
         ?Carbon $expiresAt = null
     ): IntegrationCredential {
-        return $this->integrationCredentials()->updateOrCreate(
+        /** @var IntegrationCredential $credential */
+        $credential = $this->integrationCredentials()->updateOrCreate(
             [
                 'provider' => $provider,
                 'key' => $key,
@@ -62,6 +69,8 @@ trait MorphManyIntegrationCredentials
                 'expires_at' => $expiresAt,
             ]
         );
+
+        return $credential;
     }
 
     /**

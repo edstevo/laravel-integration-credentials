@@ -50,6 +50,16 @@ it('can retrieve only the credential value', function () {
     expect($value)->toBe('123456');
 });
 
+it('updates an existing integration credential without creating duplicates', function () {
+    $owner = TestIntegrationOwner::create(['name' => 'Test App']);
+
+    $owner->setIntegrationCredential('shopify', 'access_token', 'old_token');
+    $owner->setIntegrationCredential('shopify', 'access_token', 'new_token');
+
+    expect($owner->integrationCredentials()->count())->toBe(1)
+        ->and($owner->getIntegrationCredentialValue('shopify', 'access_token'))->toBe('new_token');
+});
+
 it('does not return expired credentials by default', function () {
     $owner = TestIntegrationOwner::create(['name' => 'Test App']);
 
@@ -130,4 +140,38 @@ it('can scope query via eloquent - expecting null', function () {
     $res = TestIntegrationOwner::whereHasIntegrationCredentialValue('shopify', 'id', $testId)->first();
 
     expect($res)->toBeNull();
+});
+
+it('scope excludes expired credentials by default', function () {
+    $owner = TestIntegrationOwner::create(['name' => 'Test App']);
+    $owner->setIntegrationCredential(
+        provider: 'shopify',
+        key: 'access_token',
+        value: 'expired_value',
+        expiresAt: now()->subHour()
+    );
+
+    $res = TestIntegrationOwner::whereHasIntegrationCredentialValue('shopify', 'access_token', 'expired_value')->first();
+
+    expect($res)->toBeNull();
+});
+
+it('scope can include expired credentials when mustBeValid is false', function () {
+    $owner = TestIntegrationOwner::create(['name' => 'Test App']);
+    $owner->setIntegrationCredential(
+        provider: 'shopify',
+        key: 'access_token',
+        value: 'expired_value',
+        expiresAt: now()->subHour()
+    );
+
+    $res = TestIntegrationOwner::whereHasIntegrationCredentialValue(
+        provider: 'shopify',
+        key: 'access_token',
+        value: 'expired_value',
+        mustBeValid: false
+    )->first();
+
+    expect($res)->toBeInstanceOf(TestIntegrationOwner::class)
+        ->and($res->id)->toBe($owner->id);
 });

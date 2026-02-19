@@ -1,59 +1,85 @@
-# A small package to store integration credentials against laravel models
+# Laravel Integration Credentials
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/edstevo/laravelintegrationcredentials.svg?style=flat-square)](https://packagist.org/packages/edstevo/laravelintegrationcredentials)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/edstevo/laravelintegrationcredentials/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/edstevo/laravelintegrationcredentials/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/edstevo/laravelintegrationcredentials/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/edstevo/laravelintegrationcredentials/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/edstevo/laravelintegrationcredentials.svg?style=flat-square)](https://packagist.org/packages/edstevo/laravelintegrationcredentials)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/edstevo/laravel-integration-credentials.svg?style=flat-square)](https://packagist.org/packages/edstevo/laravel-integration-credentials)
+[![Tests](https://img.shields.io/github/actions/workflow/status/edstevo/laravel-integration-credentials/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/edstevo/laravel-integration-credentials/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/edstevo/laravel-integration-credentials.svg?style=flat-square)](https://packagist.org/packages/edstevo/laravel-integration-credentials)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/LaravelIntegrationCredentials.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/LaravelIntegrationCredentials)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+Store integration credentials (provider/key/value) against any Eloquent model through a polymorphic relationship.
 
 ## Installation
 
-You can install the package via composer:
-
 ```bash
-composer require edstevo/laravelintegrationcredentials
+composer require edstevo/laravel-integration-credentials
 ```
 
-You can publish and run the migrations with:
+Migrations are auto-discovered and run with your normal `php artisan migrate` flow.
+
+If you prefer publishing package migrations first:
 
 ```bash
-php artisan vendor:publish --tag="laravelintegrationcredentials-migrations"
+php artisan vendor:publish --tag="laravel-integration-credentials-migrations"
 php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="laravelintegrationcredentials-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravelintegrationcredentials-views"
 ```
 
 ## Usage
 
+Add the trait to any model that should own credentials:
+
 ```php
-$laravelIntegrationCredentials = new EdStevo\LaravelIntegrationCredentials();
-echo $laravelIntegrationCredentials->echoPhrase('Hello, EdStevo!');
+<?php
+
+namespace App\Models;
+
+use EdStevo\LaravelIntegrationCredentials\Models\Concerns\MorphManyIntegrationCredentials;
+use Illuminate\Database\Eloquent\Model;
+
+class Store extends Model
+{
+    use MorphManyIntegrationCredentials;
+}
+```
+
+Set and read credentials:
+
+```php
+$store->setIntegrationCredential('shopify', 'access_token', 'token_123');
+
+$credential = $store->getIntegrationCredential('shopify', 'access_token');
+$value = $store->getIntegrationCredentialValue('shopify', 'access_token');
+```
+
+Use expirations:
+
+```php
+$store->setIntegrationCredential(
+    provider: 'shopify',
+    key: 'access_token',
+    value: 'token_123',
+    expiresAt: now()->addHour(),
+);
+
+$validValue = $store->getIntegrationCredentialValue('shopify', 'access_token');
+$includeExpired = $store->getIntegrationCredentialValue('shopify', 'access_token', allowExpired: true);
+```
+
+Delete one credential or all credentials for a provider:
+
+```php
+$store->forgetIntegrationCredential('shopify', 'access_token');
+$store->forgetIntegrationProvider('shopify');
+```
+
+Query models by integration credential value:
+
+```php
+$store = Store::whereHasIntegrationCredentialValue('shopify', 'shop_id', '12345')->first();
+
+$storeIncludingExpired = Store::whereHasIntegrationCredentialValue(
+    provider: 'shopify',
+    key: 'shop_id',
+    value: '12345',
+    mustBeValid: false,
+)->first();
 ```
 
 ## Testing
@@ -64,21 +90,16 @@ composer test
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Security Vulnerabilities
+## Security
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [edstevo](https://github.com/edstevo)
-- [All Contributors](../../contributors)
+See [SECURITY.md](SECURITY.md).
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). See [LICENSE.md](LICENSE.md).
