@@ -1,5 +1,7 @@
 <?php
 
+use EdStevo\LaravelIntegrationCredentials\Models\IntegrationCredential;
+use Illuminate\Support\Str;
 use Workbench\App\Models\TestIntegrationOwner;
 
 it('can attach integration credentials via morphMany', function () {
@@ -13,7 +15,7 @@ it('can attach integration credentials via morphMany', function () {
         'value' => 'shpca_test_123',
     ]);
 
-    expect($credential)->toBeInstanceOf(\EdStevo\LaravelIntegrationCredentials\Models\IntegrationCredential::class)
+    expect($credential)->toBeInstanceOf(IntegrationCredential::class)
         ->and($credential->integrable)->toBeInstanceOf(TestIntegrationOwner::class)
         ->and($credential->provider)->toBe('shopify')
         ->and($credential->key)->toBe('access_token')
@@ -122,7 +124,7 @@ it('can forget all credentials for a provider', function () {
 });
 
 it('can scope query via eloquent - expecting test model', function () {
-    $testId = \Illuminate\Support\Str::random();
+    $testId = Str::random();
 
     $owner = TestIntegrationOwner::create(['name' => 'Test App']);
     $owner->setIntegrationCredential('shopify', 'id', $testId);
@@ -134,7 +136,7 @@ it('can scope query via eloquent - expecting test model', function () {
 });
 
 it('can scope query via eloquent - expecting null', function () {
-    $testId = \Illuminate\Support\Str::random();
+    $testId = Str::random();
     $owner = TestIntegrationOwner::create(['name' => 'Test App']);
 
     $res = TestIntegrationOwner::whereHasIntegrationCredentialValue('shopify', 'id', $testId)->first();

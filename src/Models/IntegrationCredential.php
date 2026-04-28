@@ -4,10 +4,11 @@ namespace EdStevo\LaravelIntegrationCredentials\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $value
- * @property \Illuminate\Support\Carbon|null $expires_at
+ * @property Carbon|null $expires_at
  */
 class IntegrationCredential extends Model
 {

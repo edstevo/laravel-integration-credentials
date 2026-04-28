@@ -2,6 +2,8 @@
 
 namespace EdStevo\LaravelIntegrationCredentials\Tests;
 
+use EdStevo\LaravelIntegrationCredentials\LaravelIntegrationCredentialsServiceProvider;
+use Illuminate\Support\Facades\File;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -9,7 +11,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            \EdStevo\LaravelIntegrationCredentials\LaravelIntegrationCredentialsServiceProvider::class,
+            LaravelIntegrationCredentialsServiceProvider::class,
         ];
     }
 
@@ -17,11 +19,11 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__.'/../database/migrations') as $migration) {
+        foreach (File::allFiles(__DIR__.'/../database/migrations') as $migration) {
             (include $migration->getRealPath())->up();
         }
 
-        foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__.'/../workbench/database/migrations') as $migration) {
+        foreach (File::allFiles(__DIR__.'/../workbench/database/migrations') as $migration) {
             (include $migration->getRealPath())->up();
         }
     }

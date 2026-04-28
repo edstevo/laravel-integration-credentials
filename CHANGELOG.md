@@ -2,6 +2,13 @@
 
 All notable changes to `LaravelIntegrationCredentials` will be documented in this file.
 
+## v1.1.0 - 2026-04-28
+
+### What's Changed
+
+* Add Laravel 13 support while keeping compatibility with Laravel 12.
+* Update the CI matrix to test Laravel 13, 12, and 11 across PHP 8.3 and 8.4.
+
 ## v1.0.2 - 2026-01-21
 
 **Full Changelog**: https://github.com/edstevo/laravel-integration-credentials/compare/v1.0.1...v1.0.2
